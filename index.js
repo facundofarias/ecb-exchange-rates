@@ -10,7 +10,7 @@ module.exports = {
     removeNamespaces: function(xml){
 
       var fixedXML = xml.replace(/(<\/?)(\w+:)/g,'$1');
-      return fixedXML.replace(/xmlns(:\w+)?="[^"]*"/g,'');
+      return (fixedXML.replace(/xmlns(:\w+)?="[^"]*"/g,'')).trim();
 
     },
 
