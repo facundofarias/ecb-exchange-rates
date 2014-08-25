@@ -7,32 +7,37 @@ module.exports = {
       url: "http://www.ecb.int/stats/eurofxref/eurofxref-daily.xml"
     },
 
-    removeNamespaces: function(obj){
-        var r={};
-        for(var k in obj){
-            r[k.replace(/:/g,'$')] = (typeof obj[k]==='object') ? this.removeNamespaces(obj[k]) : obj[k];
-        }
-        return r;
+    removeNamespaces: function(xml){
+
+      var fixedXML = xml.replace(/(<\/?)(\w+:)/g,'$1');
+      return fixedXML.replace(/xmlns(:\w+)?="[^"]*"/g,'');
+
     },
 
     parseXML: function(xml) {
       var that = this;
-
+      var cleanXML = this.removeNamespaces(xml);
       var parser = new xml2js.Parser();
-      parser.parseString(xml, function(err,result){
-        var currencies = result['gesmes:Envelope'].Cube[0].Cube[0].Cube;
-        var timestamp = result['gesmes:Envelope'].Cube[0].Cube[0].time;
+
+      parser.parseString(cleanXML, function(err,result){
+        var currencies = result.Envelope.Cube[0].Cube[0].Cube;
         that.createCurrenciesMap(currencies);
       });
+
     },
 
     createCurrenciesMap: function(currencies) {
-      console.log(JSON.stringify(this.removeNamespaces(currencies)));
-      var curatedCurrencies = new Array();
-        currencies.forEach(function(item) {
-          //curatedCurrencies.push({ item.$.currency, item.$.rate });
-       });
-       console.log(JSON.stringify(curatedCurrencies));
+      var currenciesMap = new Array();
+
+      currencies.forEach(function(item) {
+
+        var currency = eval('item.$').currency;
+        var rate = eval('item.$').rate;
+        console.log(currency, rate);
+
+        currenciesMap.push({ currency: currency, rate: rate });
+     });
+
     },
 
 
