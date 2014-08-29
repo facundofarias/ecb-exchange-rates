@@ -1,5 +1,6 @@
 var xml2js = require('xml2js');
 var request = require('request');
+var _ = require('underscore');
 
 module.exports = {
 
@@ -7,11 +8,15 @@ module.exports = {
       url: "http://www.ecb.int/stats/eurofxref/eurofxref-daily.xml"
     },
 
-    removeNamespaces: function(xml){
+    baseCurrency: "EUR",
 
+    currenciesMap: [],
+
+    executeCallback: null,
+
+    removeNamespaces: function(xml){
       var fixedXML = xml.replace(/(<\/?)(\w+:)/g,'$1');
       return (fixedXML.replace(/xmlns(:\w+)?="[^"]*"/g,'')).trim();
-
     },
 
     parseXML: function(xml) {
@@ -27,21 +32,17 @@ module.exports = {
     },
 
     createCurrenciesMap: function(currencies) {
-      var currenciesMap = new Array();
+      var that = this;
+      _.each(currencies, function(item) {
+         var currency = eval('item.$').currency;
+         var rate = eval('item.$').rate;
+         that.currenciesMap.push({ currency: currency, rate: rate });
+      });
 
-      currencies.forEach(function(item) {
-
-        var currency = eval('item.$').currency;
-        var rate = eval('item.$').rate;
-        console.log(currency, rate);
-
-        currenciesMap.push({ currency: currency, rate: rate });
-     });
-
+      this.executeCallback();
     },
 
-
-    getCurrencies: function() {
+    getExchangeRates: function() {
       var that = this;
       request(this.settings.url, function(error, response, body) {
 
@@ -50,6 +51,40 @@ module.exports = {
         }
 
       });
+    },
+
+    roundValues: function (value, places) {
+        var multiplier = Math.pow(10, places);
+        return (Math.round(value * multiplier) / multiplier);
+    },
+
+    getAllCurrencies: function(callback) {
+      this.getExchangeRates();
+      this.executeCallback = function() {
+          callback(this.currenciesMap);
+        };
+    },
+
+    getBaseCurrency: function(callback) {
+      this.executeCallback = function() {
+          callback({currency:"EUR"});
+        }();
+    },
+
+    exchangeToEUR: function(value, callback) {
+      this.getExchangeRates();
+      this.executeCallback = function() {
+
+          var currency = _.find(this.currenciesMap, function(item) {
+             return item.currency === value.currency
+          });
+
+          var exchangedValue = {};
+          exchangedValue.currency = this.baseCurrency;
+          exchangedValue.value = this.roundValues(value.amount / currency.rate, 4);
+
+          callback(exchangedValue);
+        };
     }
 
 };

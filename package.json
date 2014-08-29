@@ -24,6 +24,7 @@
   "homepage": "https://github.com/facundofarias/ecb-exchange-rates",
   "dependencies": {
     "request": "^2.40.0",
+    "underscore": "^1.7.0",
     "xml2js": "^0.4.4"
   }
 }
