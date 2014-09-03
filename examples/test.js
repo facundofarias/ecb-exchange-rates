@@ -1,19 +1,28 @@
-var currencyConverter = require('./currencyConverter.js');
+var currencyConverter = require('../currencyConverter.js');
 
-// index.getAllCurrencies(function(data){
+// currencyConverter.getAllCurrencies(function(data){
 //   console.log(JSON.stringify(data));
 // });
 
-// index.getBaseCurrency(function(data){
+// currencyConverter.getBaseCurrency(function(data){
 //   console.log(JSON.stringify(data));
 // });
 
-var settings = {};
-settings.fromCurrency = "GBP";
-settings.toCurrency = "USD";
-settings.amount = 90;
-settings.accuracy = 5;
+// var settings = {};
+// settings.fromCurrency = "GBP";
+// settings.toCurrency = "USD";
+// settings.amount = 90;
+// settings.accuracy = 5;
+//
+// currencyConverter.convert(settings , function(data){
+//   console.log(JSON.stringify(data));
+// });
 
-currencyConverter.convert(settings , function(data){
-  console.log(JSON.stringify(data));
-});
+// var settings = {};
+// settings.fromCurrency = "GBP";
+// settings.toCurrency = "USD";
+// settings.accuracy = 5;
+//
+// currencyConverter.getExchangeRate(settings , function(data){
+//   console.log(JSON.stringify(data));
+// });

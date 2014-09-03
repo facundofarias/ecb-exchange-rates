@@ -58,6 +58,21 @@ module.exports = {
         return (Math.round(value * multiplier) / multiplier);
     },
 
+    fetchRates: function(settings) {
+      var self = this;
+      var getCurrency = function(currency) {
+        return _.find(self.currenciesMap, function(item) {
+           return item.currency === currency
+        });
+      };
+
+      var rates = {};
+      rates.fromCurrency = getCurrency(settings.fromCurrency);
+      rates.toCurrency = getCurrency(settings.toCurrency);
+      rates.exchangeRate = (1 / rates.fromCurrency.rate) * rates.toCurrency.rate;
+      return rates;
+    },
+
     getAllCurrencies: function(callback) {
       this.getExchangeRates();
       this.executeCallback = function() {
@@ -74,22 +89,26 @@ module.exports = {
     convert: function(settings, callback) {
       this.getExchangeRates();
       this.executeCallback = function() {
-
-          var self = this;
-          var getCurrency = function(currency) {
-            return _.find(self.currenciesMap, function(item) {
-               return item.currency === currency
-            });
-          };
-
-          var fromCurrency = getCurrency(settings.fromCurrency);
-          var toCurrency = getCurrency(settings.toCurrency);
-          var exchangeRate = (1 / fromCurrency.rate) * toCurrency.rate;
-
           var exchangedValue = {};
-          exchangedValue.currency = toCurrency.currency;
-          exchangedValue.exchangeRate = this.roundValues(exchangeRate, settings.accuracy | 4);
-          exchangedValue.amount = this.roundValues(settings.amount * exchangeRate, settings.accuracy | 4);
+
+          var rates = this.fetchRates(settings);
+          exchangedValue.currency = rates.toCurrency.currency;
+          exchangedValue.exchangeRate = this.roundValues(rates.exchangeRate, settings.accuracy | 4);
+          exchangedValue.amount = this.roundValues(settings.amount * rates.exchangeRate, settings.accuracy | 4);
+
+          callback(exchangedValue);
+        };
+    },
+
+    getExchangeRate: function(settings, callback) {
+      this.getExchangeRates();
+      this.executeCallback = function() {
+          var exchangedValue = {};
+
+          var rates = this.fetchRates(settings);
+          exchangedValue.toCurrency = rates.toCurrency.currency;
+          exchangedValue.fromCurrency = rates.fromCurrency.currency;
+          exchangedValue.exchangeRate = this.roundValues(rates.exchangeRate, settings.accuracy | 4);
 
           callback(exchangedValue);
         };
