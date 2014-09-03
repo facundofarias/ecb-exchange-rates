@@ -20,34 +20,34 @@ module.exports = {
     },
 
     parseXML: function(xml) {
-      var that = this;
+      var self = this;
       var cleanXML = this.removeNamespaces(xml);
       var parser = new xml2js.Parser();
 
       parser.parseString(cleanXML, function(err,result){
         var currencies = result.Envelope.Cube[0].Cube[0].Cube;
-        that.createCurrenciesMap(currencies);
+        self.createCurrenciesMap(currencies);
       });
 
     },
 
     createCurrenciesMap: function(currencies) {
-      var that = this;
+      var self = this;
       _.each(currencies, function(item) {
          var currency = eval('item.$').currency;
          var rate = eval('item.$').rate;
-         that.currenciesMap.push({ currency: currency, rate: rate });
+         self.currenciesMap.push({ currency: currency, rate: rate });
       });
 
-      this.executeCallback();
+      self.executeCallback();
     },
 
     getExchangeRates: function() {
-      var that = this;
-      request(this.settings.url, function(error, response, body) {
+      var self = this;
+      request(self.settings.url, function(error, response, body) {
 
         if (!error && response.statusCode == 200) {
-          that.parseXML(body);
+          self.parseXML(body);
         }
 
       });
@@ -71,17 +71,25 @@ module.exports = {
         }();
     },
 
-    exchangeToEUR: function(value, callback) {
+    exchange: function(settings, callback) {
       this.getExchangeRates();
       this.executeCallback = function() {
 
-          var currency = _.find(this.currenciesMap, function(item) {
-             return item.currency === value.currency
-          });
+          var self = this;
+          var getCurrency = function(currency) {
+            return _.find(self.currenciesMap, function(item) {
+               return item.currency === currency
+            });
+          };
+
+          var fromCurrency = getCurrency(settings.fromCurrency);
+          var toCurrency = getCurrency(settings.toCurrency);
+          var exchangeRate = (1 / fromCurrency.rate) * toCurrency.rate;
 
           var exchangedValue = {};
-          exchangedValue.currency = this.baseCurrency;
-          exchangedValue.value = this.roundValues(value.amount / currency.rate, 4);
+          exchangedValue.currency = toCurrency.currency;
+          exchangedValue.exchangeRate = this.roundValues(exchangeRate, settings.accuracy | 4);
+          exchangedValue.amount = this.roundValues(settings.amount * exchangeRate, settings.accuracy | 4);
 
           callback(exchangedValue);
         };

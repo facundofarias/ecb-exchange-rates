@@ -1,4 +1,4 @@
-var index = require('./index.js');
+var currencyConverter = require('./currencyConverter.js');
 
 // index.getAllCurrencies(function(data){
 //   console.log(JSON.stringify(data));
@@ -8,6 +8,12 @@ var index = require('./index.js');
 //   console.log(JSON.stringify(data));
 // });
 
-index.exchangeToEUR({currency:"USD", amount: 90}, function(data){
+var settings = {};
+settings.fromCurrency = "GBP";
+settings.toCurrency = "USD";
+settings.amount = 90;
+//settings.accuracy = 10;
+
+currencyConverter.exchange(settings , function(data){
   console.log(JSON.stringify(data));
 });
