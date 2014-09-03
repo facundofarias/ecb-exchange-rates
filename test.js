@@ -12,8 +12,8 @@ var settings = {};
 settings.fromCurrency = "GBP";
 settings.toCurrency = "USD";
 settings.amount = 90;
-//settings.accuracy = 10;
+settings.accuracy = 5;
 
-currencyConverter.exchange(settings , function(data){
+currencyConverter.convert(settings , function(data){
   console.log(JSON.stringify(data));
 });

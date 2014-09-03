@@ -71,7 +71,7 @@ module.exports = {
         }();
     },
 
-    exchange: function(settings, callback) {
+    convert: function(settings, callback) {
       this.getExchangeRates();
       this.executeCallback = function() {
 

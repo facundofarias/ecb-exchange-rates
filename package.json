@@ -1,6 +1,6 @@
 {
   "name": "ecb-exchange-rates",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "European Central Bank Exchange Rates API client module for nodejs",
   "main": "currencyConverter.js",
   "scripts": {
