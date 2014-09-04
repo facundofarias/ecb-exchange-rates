@@ -44,6 +44,8 @@ The data object that you will receive on the callback, will contain:
 * exchange Rate
 * amount
 
+By instance: {"currency":"USD","exchangeRate":1.64686,"amount":148.21739}
+
 Another User Case will be if we only need the exchange rate, then:
 
     var settings = {};
