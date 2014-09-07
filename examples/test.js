@@ -26,3 +26,13 @@ var currencyConverter = require('../currencyConverter.js');
 // currencyConverter.getExchangeRate(settings , function(data){
 //   console.log(JSON.stringify(data));
 // });
+
+// currencyConverter.getCurrenciesMetadata(function(data){
+//   console.log(JSON.stringify(data));
+// });
+
+var settings = {};
+settings.currency = "EUR";
+currencyConverter.getCurrencyMetadata(settings, function(data){
+  console.log(JSON.stringify(data));
+});

@@ -1,6 +1,8 @@
 var xml2js = require('xml2js');
 var request = require('request');
 var _ = require('underscore');
+var fs = require('fs');
+var path = require('path');
 
 module.exports = {
 
@@ -12,7 +14,14 @@ module.exports = {
 
     currenciesMap: [],
 
+    currenciesMetadata: [],
+
     executeCallback: null,
+
+    readJson: function() {
+      var data = fs.readFileSync(path.resolve(__dirname, 'Currencies.json'), 'utf8');
+      return JSON.parse(data);
+    },
 
     removeNamespaces: function(xml){
       var fixedXML = xml.replace(/(<\/?)(\w+:)/g,'$1');
@@ -112,6 +121,24 @@ module.exports = {
 
           callback(exchangedValue);
         };
+    },
+
+    getCurrenciesMetadata: function(callback) {
+      this.currenciesMetadata = this.readJson();
+      callback(this.currenciesMetadata);
+    },
+
+    getCurrencyMetadata: function(settings, callback) {
+      this.currenciesMetadata = this.readJson();
+
+      var self = this;
+      var getCurrency = function(currency) {
+        return _.find(self.currenciesMetadata, function(item) {
+           return item.Code === currency
+        });
+      };
+
+      callback(getCurrency(settings.currency));
     }
 
 };
