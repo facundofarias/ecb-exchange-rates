@@ -22,7 +22,7 @@ You can install this module by using npm [NPM](https://npmjs.org/package/ecb-exc
 
 The first step is to include the library on you app by doing:
 
-    var currencyConverter = require('currencyConverter');
+    var currencyConverter = require('ecb-exchange-rates');
 
 If we need to convert a given value, then we create this settings object:
 
