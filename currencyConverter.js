@@ -47,7 +47,7 @@ module.exports = {
          var rate = eval('item.$').rate;
          self.currenciesMap.push({ currency: currency, rate: rate });
       });
-
+      self.currenciesMap.push({ currency: 'EUR', rate: 1 });
       self.executeCallback();
     },
 
