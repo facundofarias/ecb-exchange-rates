@@ -34,7 +34,7 @@ If we need to convert a given value, then we create this settings object:
 
 After that, we can call to the convert function in this way:
 
-    currencyConverter.exchange(settings , function(data){
+    currencyConverter.convert(settings , function(data){
       console.log(JSON.stringify(data));
     });
 
